@@ -5,12 +5,6 @@ import LinksList from './components/LinksList'
 import GraphCanvas from './components/GraphCanvas'
 import NoiseOverlay from './components/NoiseOverlay'
 
-const BIO_TEXT =
-  "Full-stack engineer who ended up in applied AI, mostly because I like turning messy, unstructured things into something a machine can actually reason about. I'm increasingly curious about how to build systems that stay useful when the ground shifts under them."
-
-const CURRENTLY_TEXT =
-  'Shipping applied AI in production, chipping away at an MS in Computer Science at Georgia Tech.'
-
 export default function App() {
   return (
     <div className="relative min-h-screen w-full overflow-hidden bg-bg text-heading">
@@ -25,8 +19,8 @@ export default function App() {
 
           <div className="mb-7 h-px w-8 bg-white/10" />
 
-          <Bio text={BIO_TEXT} />
-          <CurrentlyLine text={CURRENTLY_TEXT} />
+          <Bio />
+          <CurrentlyLine />
           <LinksList />
         </div>
       </div>
