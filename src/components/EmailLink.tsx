@@ -1,4 +1,4 @@
-const EMAIL = 'teekyk22@gmail.com'
+const EMAIL = 'heyprateekk@gmail.com'
 
 export default function EmailLink() {
   return (
