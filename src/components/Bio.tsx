@@ -3,7 +3,7 @@ const BIO_TEXT =
 
 export default function Bio() {
   return (
-    <p className="font-body text-sm md:text-base leading-relaxed text-body max-w-[480px] mb-7">
+    <p className="font-body text-sm md:text-base 2xl:text-lg leading-relaxed text-body max-w-[480px] 2xl:max-w-[580px] mb-7">
       {BIO_TEXT}
     </p>
   )

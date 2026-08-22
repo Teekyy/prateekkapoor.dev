@@ -34,7 +34,7 @@ export default function EmailLink() {
       <button
         type="button"
         onClick={() => setIsOpen((open) => !open)}
-        className="font-body text-[13px] text-muted tracking-wide bg-transparent border-none p-0 cursor-pointer transition-colors hover:text-accent-deep"
+        className="font-body text-[13px] 2xl:text-[15px] text-muted tracking-wide bg-transparent border-none p-0 cursor-pointer transition-colors hover:text-accent-deep"
       >
         Email
       </button>

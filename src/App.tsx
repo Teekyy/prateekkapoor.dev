@@ -14,7 +14,7 @@ export default function App() {
       </div>
 
       <div className="relative z-20 flex min-h-screen items-end pointer-events-none p-10 pb-14 md:p-16 md:pb-24">
-        <div className="pointer-events-auto w-full max-w-[520px]">
+        <div className="pointer-events-auto w-full max-w-[520px] 2xl:max-w-[640px]">
           <NameHeading name="Prateek Kapoor" title="Software Engineer" tag="Applied AI" />
 
           <div className="mb-7 h-px w-8 bg-white/10" />

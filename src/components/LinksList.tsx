@@ -25,7 +25,7 @@ export default function LinksList() {
             <a
               href={link.href}
               {...(link.newTab ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-              className="font-body text-[13px] text-muted tracking-wide no-underline transition-colors hover:text-accent-deep"
+              className="font-body text-[13px] 2xl:text-[15px] text-muted tracking-wide no-underline transition-colors hover:text-accent-deep"
             >
               {link.label}
             </a>
