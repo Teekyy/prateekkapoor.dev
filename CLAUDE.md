@@ -1,4 +1,4 @@
-# prateekkapoor.com — Site Vision & Style Guide
+# prateekkapoor.dev — Site Vision & Style Guide
 
 This is the durable design/product context for this personal site. It describes
 intent and standing decisions, not a specific build log — exact copy (bio text,

@@ -1,2 +1,2 @@
-# prateekkapoor.com
+# prateekkapoor.dev
 Personal website
