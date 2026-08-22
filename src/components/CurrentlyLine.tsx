@@ -1,5 +1,5 @@
 const CURRENTLY_TEXT =
-  'Shipping applied AI in production, chipping away at an MS in Computer Science at Georgia Tech.'
+  'Pursuing MS CS at GaTech, concentrating in AI/ML. Reading Hyperion.'
 
 export default function CurrentlyLine() {
   return (

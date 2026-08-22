@@ -1,5 +1,5 @@
 const BIO_TEXT = 
-"Full-stack engineer who ended up in applied AI, mostly because I like turning messy, unstructured things into something a machine can actually reason about. I'm increasingly curious about how to build systems that stay useful when the ground shifts under them."
+"Working in AI to tackle problems that used to be too messy to touch. I like working on things that require depth and feel fulfilling. Ultimately, I want to contribute back to the world more than I take."
 
 export default function Bio() {
   return (
