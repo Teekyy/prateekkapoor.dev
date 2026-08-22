@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
-
-const NODE_COUNT = 64
+const REFERENCE_NODE_DENSITY = 64 / (778 * 900)
+const MIN_NODE_COUNT = 64
+const MAX_NODE_COUNT = 160
 const LINK_DISTANCE = 110
 const MOUSE_DISTANCE = 140
 const PULSE_INTERVAL_MS = 2000 // time between idle edge pulses
@@ -42,7 +43,10 @@ export default function ConstellationGraph({ width, height }: ConstellationGraph
   useEffect(() => {
     if (!hasInitializedNodesRef.current && width > 0 && height > 0) {
       hasInitializedNodesRef.current = true
-      nodesRef.current = Array.from({ length: NODE_COUNT }, () => ({
+      const nodeCount = Math.round(
+        Math.min(MAX_NODE_COUNT, Math.max(MIN_NODE_COUNT, width * height * REFERENCE_NODE_DENSITY)),
+      )
+      nodesRef.current = Array.from({ length: nodeCount }, () => ({
         x: Math.random() * width,
         y: Math.random() * height,
         velocityX: (Math.random() - 0.5) * 0.22,
