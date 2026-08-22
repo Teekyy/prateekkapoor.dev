@@ -13,7 +13,7 @@ export default function App() {
         <GraphCanvas />
       </div>
 
-      <div className="relative z-20 flex min-h-screen items-end pointer-events-none p-10 pb-14 md:p-16 md:pb-24">
+      <div className="relative z-20 flex min-h-screen items-center pointer-events-none p-10 md:p-16">
         <div className="pointer-events-auto w-full max-w-[520px] 2xl:max-w-[640px]">
           <NameHeading name="Prateek Kapoor" title="Software Engineer" tag="Applied AI" />
 
