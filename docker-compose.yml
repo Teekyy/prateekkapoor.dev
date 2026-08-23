@@ -1,5 +1,5 @@
 services:
-  prateekkapoor-dev:
+  web:
     build: .
     container_name: prateekkapoor-dev
     restart: unless-stopped
