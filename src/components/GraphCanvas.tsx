@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import ConstellationGraph from './ConstellationGraph'
+import NodeNetwork from './NodeNetwork'
 
 export default function GraphCanvas() {
   const wrapperRef = useRef<HTMLDivElement>(null)
@@ -19,8 +19,8 @@ export default function GraphCanvas() {
   }, [])
 
   return (
-    <div ref={wrapperRef} className="w-full h-full">
-      {size.width > 0 && <ConstellationGraph width={size.width} height={size.height} />}
+    <div ref={wrapperRef} className="w-full h-full select-none">
+      {size.width > 0 && <NodeNetwork width={size.width} height={size.height} />}
     </div>
   )
 }

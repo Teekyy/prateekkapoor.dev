@@ -24,12 +24,12 @@ interface Pulse {
   bornAtTimestamp: number
 }
 
-interface ConstellationGraphProps {
+interface NodeNetworkProps {
   width: number
   height: number
 }
 
-export default function ConstellationGraph({ width, height }: ConstellationGraphProps) {
+export default function NodeNetwork({ width, height }: NodeNetworkProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   // Mutable data that changes constantly (every animation frame, every mouse
@@ -47,6 +47,13 @@ export default function ConstellationGraph({ width, height }: ConstellationGraph
     const targetCount = Math.round(
       Math.min(MAX_NODE_COUNT, Math.max(MIN_NODE_COUNT, REFERENCE_NODE_COUNT * areaRatio ** AREA_DENSITY_EXPONENT)),
     )
+    for (const node of nodesRef.current) {
+      if (node.x < -LEFT_FADE_ZONE || node.x > width || node.y < 0 || node.y > height) {
+        node.x = Math.random() * width
+        node.y = Math.random() * height
+      }
+    }
+
     const currentNodes = nodesRef.current
     if (currentNodes.length > targetCount) {
       nodesRef.current = currentNodes.slice(0, targetCount)
@@ -217,7 +224,7 @@ export default function ConstellationGraph({ width, height }: ConstellationGraph
   return (
     <canvas
       ref={canvasRef}
-      className="block"
+      className="block select-none"
       aria-hidden="true"
       onMouseMove={(mouseEvent) => {
         const canvasBounds = mouseEvent.currentTarget.getBoundingClientRect()
