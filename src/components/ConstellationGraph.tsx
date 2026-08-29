@@ -1,7 +1,9 @@
 import { useEffect, useRef } from 'react'
-const REFERENCE_NODE_DENSITY = 64 / (778 * 900)
+const REFERENCE_NODE_COUNT = 64
+const REFERENCE_AREA = 778 * 900
+const AREA_DENSITY_EXPONENT = 2.4 // > 1 so bigger panels get denser, not just more nodes at the same density
 const MIN_NODE_COUNT = 64
-const MAX_NODE_COUNT = 280
+const MAX_NODE_COUNT = 360
 const LINK_DISTANCE_FACTOR = 1.05 // multiple of avg node spacing a link can span
 const MIN_LINK_DISTANCE = 110 // px floor so small/narrow panels stay as connected as before
 const MOUSE_DISTANCE = 140
@@ -37,23 +39,25 @@ export default function ConstellationGraph({ width, height }: ConstellationGraph
   const mousePositionRef = useRef({ x: -9999, y: -9999, isActive: false })
   const pulsesRef = useRef<Pulse[]>([])
   const lastPulseTimestampRef = useRef(0)
-  const hasInitializedNodesRef = useRef(false)
 
-  // Seed random starting positions once, the first time we actually know the
-  // real pixel size (before that, width/height are 0 and placing nodes would
-  // be meaningless).
+  // Resync node count to the current panel size on every resize, not just once
   useEffect(() => {
-    if (!hasInitializedNodesRef.current && width > 0 && height > 0) {
-      hasInitializedNodesRef.current = true
-      const nodeCount = Math.round(
-        Math.min(MAX_NODE_COUNT, Math.max(MIN_NODE_COUNT, width * height * REFERENCE_NODE_DENSITY)),
-      )
-      nodesRef.current = Array.from({ length: nodeCount }, () => ({
+    if (width === 0 || height === 0) return
+    const areaRatio = (width * height) / REFERENCE_AREA
+    const targetCount = Math.round(
+      Math.min(MAX_NODE_COUNT, Math.max(MIN_NODE_COUNT, REFERENCE_NODE_COUNT * areaRatio ** AREA_DENSITY_EXPONENT)),
+    )
+    const currentNodes = nodesRef.current
+    if (currentNodes.length > targetCount) {
+      nodesRef.current = currentNodes.slice(0, targetCount)
+    } else if (currentNodes.length < targetCount) {
+      const additionalNodes = Array.from({ length: targetCount - currentNodes.length }, () => ({
         x: Math.random() * width,
         y: Math.random() * height,
         velocityX: (Math.random() - 0.5) * 0.22,
         velocityY: (Math.random() - 0.5) * 0.22,
       }))
+      nodesRef.current = [...currentNodes, ...additionalNodes]
     }
   }, [width, height])
 
