@@ -1,9 +1,11 @@
 import { useEffect, useRef } from 'react'
 const REFERENCE_NODE_DENSITY = 64 / (778 * 900)
 const MIN_NODE_COUNT = 64
-const MAX_NODE_COUNT = 160
-const LINK_DISTANCE = 110
+const MAX_NODE_COUNT = 280
+const LINK_DISTANCE_FACTOR = 1.05 // multiple of avg node spacing a link can span
+const MIN_LINK_DISTANCE = 110 // px floor so small/narrow panels stay as connected as before
 const MOUSE_DISTANCE = 140
+const LEFT_FADE_ZONE = 90 // px past the left edge over which nodes fade out
 const PULSE_INTERVAL_MS = 2000 // time between idle edge pulses
 const PULSE_DURATION_MS = 1600 // how long one pulse takes to fade in and out
 
@@ -75,12 +77,16 @@ export default function ConstellationGraph({ width, height }: ConstellationGraph
       context.clearRect(0, 0, width, height)
       const nodes = nodesRef.current
       const mousePosition = mousePositionRef.current
+      const linkDistance = Math.max(
+        MIN_LINK_DISTANCE,
+        Math.sqrt((width * height) / nodes.length) * LINK_DISTANCE_FACTOR,
+      )
 
-      // Move every node, bouncing off the edges of the canvas.
+      // Move every node
       for (const node of nodes) {
         node.x += node.velocityX
         node.y += node.velocityY
-        if (node.x < 0 || node.x > width) node.velocityX *= -1
+        if (node.x > width || node.x < -LEFT_FADE_ZONE) node.velocityX *= -1
         if (node.y < 0 || node.y > height) node.velocityY *= -1
 
         if (mousePosition.isActive) {
@@ -94,6 +100,9 @@ export default function ConstellationGraph({ width, height }: ConstellationGraph
           }
         }
       }
+
+      // 1 = fully visible, 0 = invisible at/past the left boundary
+      const edgeFade = nodes.map((node) => Math.max(0, Math.min(1, node.x / LEFT_FADE_ZONE)))
 
       // Drop any pulse that has finished fading out.
       pulsesRef.current = pulsesRef.current.filter(
@@ -117,7 +126,7 @@ export default function ConstellationGraph({ width, height }: ConstellationGraph
               nodeIndexesAlreadyPulsing.has(indexA) || nodeIndexesAlreadyPulsing.has(indexB)
             const closeEnough =
               Math.hypot(nodes[indexA].x - nodes[indexB].x, nodes[indexA].y - nodes[indexB].y) <
-              LINK_DISTANCE
+              linkDistance
             if (!alreadyPulsing && closeEnough) candidatePairs.push([indexA, indexB])
           }
         }
@@ -134,13 +143,13 @@ export default function ConstellationGraph({ width, height }: ConstellationGraph
           const nodeA = nodes[indexA]
           const nodeB = nodes[indexB]
           const distance = Math.hypot(nodeA.x - nodeB.x, nodeA.y - nodeB.y)
-          if (distance >= LINK_DISTANCE) continue
+          if (distance >= linkDistance) continue
 
           const nodeANearMouse =
             mousePosition.isActive && Math.hypot(nodeA.x - mousePosition.x, nodeA.y - mousePosition.y) < MOUSE_DISTANCE
           const nodeBNearMouse =
             mousePosition.isActive && Math.hypot(nodeB.x - mousePosition.x, nodeB.y - mousePosition.y) < MOUSE_DISTANCE
-          const proximityStrength = 1 - distance / LINK_DISTANCE
+          const proximityStrength = 1 - distance / linkDistance
 
           const activePulse = pulsesRef.current.find(
             (pulse) =>
@@ -150,6 +159,7 @@ export default function ConstellationGraph({ width, height }: ConstellationGraph
           const pulseProgress = activePulse
             ? Math.max(0, Math.sin(((currentTimestamp - activePulse.bornAtTimestamp) / PULSE_DURATION_MS) * Math.PI))
             : 0
+          const linkFade = Math.min(edgeFade[indexA], edgeFade[indexB])
 
           context.beginPath()
           context.moveTo(nodeA.x, nodeA.y)
@@ -157,15 +167,15 @@ export default function ConstellationGraph({ width, height }: ConstellationGraph
           if (nodeANearMouse && nodeBNearMouse) {
             context.strokeStyle = '#a8646f'
             context.lineWidth = 1.2
-            context.globalAlpha = proximityStrength * 0.85
+            context.globalAlpha = proximityStrength * 0.85 * linkFade
           } else if (activePulse && pulseProgress > 0) {
             context.strokeStyle = '#a8646f'
             context.lineWidth = 0.6 + pulseProgress * 0.7
-            context.globalAlpha = proximityStrength * 0.22 + pulseProgress * 0.55
+            context.globalAlpha = (proximityStrength * 0.22 + pulseProgress * 0.55) * linkFade
           } else {
             context.strokeStyle = '#7c8aa8'
             context.lineWidth = 0.6
-            context.globalAlpha = proximityStrength * 0.22
+            context.globalAlpha = proximityStrength * 0.22 * linkFade
           }
           context.stroke()
         }
@@ -188,7 +198,7 @@ export default function ConstellationGraph({ width, height }: ConstellationGraph
         const radius = nearMouse ? 2.8 : activePulse ? 1.8 + pulseProgress * 0.8 : 1.8
         context.arc(node.x, node.y, radius, 0, Math.PI * 2)
         context.fillStyle = nearMouse || (activePulse && pulseProgress > 0.1) ? '#a8646f' : '#f5f7fb'
-        context.globalAlpha = nearMouse ? 0.92 : activePulse ? 0.28 + pulseProgress * 0.55 : 0.28
+        context.globalAlpha = (nearMouse ? 0.92 : activePulse ? 0.28 + pulseProgress * 0.55 : 0.28) * edgeFade[nodeIndex]
         context.fill()
       }
       context.globalAlpha = 1
