@@ -16,11 +16,12 @@
   --font-body: 'Inter', sans-serif;
 }
 
-html, body, #root {
+html, body {
   margin: 0;
-  height: 100%;
-  height: 100dvh;
-  overflow: hidden;
   overscroll-behavior: none;
   background-color: var(--color-bg);
+}
+
+#root {
+  height: 100dvh;
 }
