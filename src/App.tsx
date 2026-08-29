@@ -7,7 +7,7 @@ import NoiseOverlay from './components/NoiseOverlay'
 
 export default function App() {
   return (
-    <div className="relative h-dvh w-full overflow-hidden bg-bg text-heading">
+    <div className="relative min-h-dvh w-full bg-bg text-heading">
       <NoiseOverlay />
       <div className="absolute top-0 right-0 z-10 h-full w-[54vw]">
         <GraphCanvas />
