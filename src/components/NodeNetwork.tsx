@@ -1,11 +1,11 @@
 import { useEffect, useRef } from 'react'
-const REFERENCE_NODE_COUNT = 64
-const REFERENCE_AREA = 778 * 900
-const AREA_DENSITY_EXPONENT = 2.4 // > 1 so bigger panels get denser, not just more nodes at the same density
-const MIN_NODE_COUNT = 64
-const MAX_NODE_COUNT = 360
-const LINK_DISTANCE_FACTOR = 1.05 // multiple of avg node spacing a link can span
-const MIN_LINK_DISTANCE = 110 // px floor so small/narrow panels stay as connected as before
+const REFERENCE_NODE_COUNT = 160
+const REFERENCE_AREA = 691 * 800
+const AREA_DENSITY_EXPONENT = 1.4 // > 1 so bigger panels get denser, not just more nodes at the same density
+const MIN_NODE_COUNT = 70
+const MAX_NODE_COUNT = 550
+const LINK_DISTANCE_FACTOR = 1.25 // multiple of avg node spacing a link can span
+const MIN_LINK_DISTANCE = 115 // px floor so small/narrow panels stay as connected as before
 const MOUSE_DISTANCE = 140
 const LEFT_FADE_ZONE = 90 // px past the left edge over which nodes fade out
 const PULSE_INTERVAL_MS = 2000 // time between idle edge pulses
