@@ -8,8 +8,10 @@ const LINK_DISTANCE_FACTOR = 1.25 // multiple of avg node spacing a link can spa
 const MIN_LINK_DISTANCE = 115 // px floor so small/narrow panels stay as connected as before
 const MOUSE_DISTANCE = 140
 const LEFT_FADE_ZONE = 90 // px past the left edge over which nodes fade out
-const PULSE_INTERVAL_MS = 2000 // time between idle edge pulses
-const PULSE_DURATION_MS = 1600 // how long one pulse takes to fade in and out
+const PULSE_INTERVAL_MS = 2000 // time between idle edge pulses, at the reference node count
+const PULSE_DURATION_MS = 2800 // how long one pulse takes to fade in and out
+const PULSE_NODES_PER_SLOT = 45 // one additional concurrent pulse per this many nodes
+const MIN_CONCURRENT_PULSES = 2
 
 interface GraphNode {
   x: number
@@ -32,9 +34,7 @@ interface NodeNetworkProps {
 export default function NodeNetwork({ width, height }: NodeNetworkProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
-  // Mutable data that changes constantly (every animation frame, every mouse
-  // move). Deliberately refs, not state: we draw directly to the canvas
-  // ourselves each frame, so there's nothing for a React re-render to do here.
+  // Refs, not state: we draw directly to the canvas each frame ourselves.
   const nodesRef = useRef<GraphNode[]>([])
   const mousePositionRef = useRef({ x: -9999, y: -9999, isActive: false })
   const pulsesRef = useRef<Pulse[]>([])
@@ -120,12 +120,16 @@ export default function NodeNetwork({ width, height }: NodeNetworkProps) {
         (pulse) => currentTimestamp - pulse.bornAtTimestamp < PULSE_DURATION_MS,
       )
 
-      // Every couple seconds, while the cursor is idle, light up one random
-      // connection between two nearby nodes that isn't already lit.
+      // Denser panels get more concurrent pulses, spawned faster, to stay proportionally visible.
+      const maxConcurrentPulses = Math.max(
+        MIN_CONCURRENT_PULSES,
+        Math.round(nodes.length / PULSE_NODES_PER_SLOT),
+      )
+      const pulseIntervalMs = PULSE_INTERVAL_MS * (MIN_CONCURRENT_PULSES / maxConcurrentPulses)
       if (
         !mousePosition.isActive &&
-        currentTimestamp - lastPulseTimestampRef.current > PULSE_INTERVAL_MS &&
-        pulsesRef.current.length < 2
+        currentTimestamp - lastPulseTimestampRef.current > pulseIntervalMs &&
+        pulsesRef.current.length < maxConcurrentPulses
       ) {
         const nodeIndexesAlreadyPulsing = new Set(
           pulsesRef.current.flatMap((pulse) => [pulse.nodeIndexA, pulse.nodeIndexB]),
@@ -186,7 +190,7 @@ export default function NodeNetwork({ width, height }: NodeNetworkProps) {
           } else {
             context.strokeStyle = '#7c8aa8'
             context.lineWidth = 0.6
-            context.globalAlpha = proximityStrength * 0.22 * linkFade
+            context.globalAlpha = (0.08 + proximityStrength * 0.24) * linkFade
           }
           context.stroke()
         }
@@ -209,7 +213,7 @@ export default function NodeNetwork({ width, height }: NodeNetworkProps) {
         const radius = nearMouse ? 2.8 : activePulse ? 1.8 + pulseProgress * 0.8 : 1.8
         context.arc(node.x, node.y, radius, 0, Math.PI * 2)
         context.fillStyle = nearMouse || (activePulse && pulseProgress > 0.1) ? '#a8646f' : '#f5f7fb'
-        context.globalAlpha = (nearMouse ? 0.92 : activePulse ? 0.28 + pulseProgress * 0.55 : 0.28) * edgeFade[nodeIndex]
+        context.globalAlpha = (nearMouse ? 0.92 : activePulse ? 0.32 + pulseProgress * 0.5 : 0.32) * edgeFade[nodeIndex]
         context.fill()
       }
       context.globalAlpha = 1

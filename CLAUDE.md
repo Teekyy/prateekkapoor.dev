@@ -115,3 +115,6 @@ Vite + React + TypeScript + Tailwind CSS. One component per concept under
 `src/components/`, composed together in `src/App.tsx`. No routing or state
 management library yet — add one only when the site actually grows past what plain
 component composition can handle cleanly.
+
+Code comments: single line only, max two lines, and concise. No multi-line comment
+blocks or paragraph-style explanations.
