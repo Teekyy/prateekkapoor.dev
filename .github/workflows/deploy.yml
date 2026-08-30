@@ -37,4 +37,4 @@ jobs:
         env:
           DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
         run: |
-          ssh deploy-target "cd $DEPLOY_PATH && git pull origin main && docker compose up -d --build"
+          ssh deploy-target
